@@ -38,8 +38,18 @@ Makefile.in
 /INSTALL
 /config.guess
 /config.log
+/config.status
 /config.sub
 /ltmain.sh
+/libtool
+.deps
+.libs
 
 *~
 Makefile
+scripts/libfidwid-config
+scripts/libfidwid-local-config
+src/testFidWid/testFidWidget
+src/testFidWid/testOpenGLFBWidget
+src/testFidWid/testOpenGLTexWidget
+src/testFidWid/testX11FidWidget
