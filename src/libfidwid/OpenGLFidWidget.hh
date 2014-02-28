@@ -30,7 +30,11 @@
 #include <QApplication>
 #include <QGLWidget>
 #include <QPaintEvent>
+#ifdef HOST_DARWIN
+#include <OpenGL/glu.h>
+#else
 #include <GL/glu.h>
+#endif
 /*-------------------------------------------------------------------------
  *  OpenGLFBWidget class
  *-------------------------------------------------------------------------*/

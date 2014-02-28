@@ -1,5 +1,6 @@
 AC_INIT([libfidwid],[0.1.0])
 AC_CONFIG_SRCDIR([src/libfidwid/FastImageDisplayWid.hh])
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_CXX
@@ -7,24 +8,38 @@ AC_LANG(C++)
 AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
-
-dnl PKG_CHECK_MODULES([qt3], [qt-mt >= 3.3.0])
-dnl AC_PATH_PROG([qt3_MOC], [moc-qt3], [no])
-dnl if test $qt3_MOC = "no"; then
-dnl    AC_PATH_PROG([qt3_MOC], [moc], [no])
-dnl    if test $qt3_MOC = "no"; then
-dnl       AC_MSG_ERROR( Could not find moc)
-dnl    fi
-dnl fi
+AC_CANONICAL_HOST
 
 PKG_CHECK_MODULES([QtCore], [QtCore >= 4.8.4])
 PKG_CHECK_MODULES([QtGui], [QtGui >= 4.8.4])
 PKG_CHECK_MODULES([QtOpenGL], [QtOpenGL >= 4.8.4])
 AC_CHECK_PROG(MOC, [moc], [moc])
 
-dnl Check for GLUT headers first.
-AC_CHECK_HEADERS(GL/glut.h, ,
-	[AC_MSG_ERROR([No glut.h found.])])
+GL_CPPFLAGS=""
+GL_LIBS=""
+HOST_DARWIN=0
+HOST_LINUX=0
+case $host_os in
+  darwin* )
+        # Do something specific for mac
+        GL_CPPFLAGS="-DHOST_DARWIN -framework OpenGL" 
+        GL_LIBS="-framework OpenGL"
+        HOST_DARWIN=1
+        ;;
+  linux*)
+        AC_CHECK_HEADERS(GL/glu.h, ,
+	[AC_MSG_ERROR([No glu.h found.])])
+        HOST_LINUX=1
+        ;;
+    *)
+        #Default Case
+        AC_MSG_ERROR([Your platform is not currently supported])
+        ;;
+esac
+AC_SUBST(GL_CPPFLAGS)
+AC_SUBST(GL_LIBS)
+AM_CONDITIONAL([DARWIN], [test x$HOST_DARWIN = x1])
+AM_CONDITIONAL([LINUX], [test x$HOST_LINUX = x1])
 
 lt_major=1
 lt_revision=0
