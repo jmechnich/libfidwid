@@ -38,8 +38,7 @@ template<typename WidgetType>
 class FastImageDisplayWid_Templ : public WidgetType
 {
 public:
-   FastImageDisplayWid_Templ( QWidget* parent=0, const char * name=0,
-                        Qt::WFlags f=0);
+   FastImageDisplayWid_Templ( QWidget* parent=0);
   
   void setImageSize( unsigned int width, unsigned int height);
 

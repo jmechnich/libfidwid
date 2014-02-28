@@ -32,10 +32,8 @@
  *  DESCRIPTION OF FUNCTION:  Constructor
  *  ==> see headerfile
  *=======================================================================*/
-OpenGLFBWidget::OpenGLFBWidget( QWidget * parent, 
-                                const char * name,
-                                WFlags f)
-        :QGLWidget( parent, name, 0, f), _subSampling(1), _data( 0),
+OpenGLFBWidget::OpenGLFBWidget( QWidget * parent)
+        :QGLWidget( parent), _subSampling(1), _data( 0),
          _rowStart( 0)
 {}
 
@@ -60,9 +58,8 @@ OpenGLFBWidget::~OpenGLFBWidget()
  *  DESCRIPTION OF FUNCTION:  Constructor
  *  ==> see headerfile
  *=======================================================================*/
-OpenGLTexWidget::OpenGLTexWidget( QWidget * parent, const char * name,
-                                  WFlags f)
-        :QGLWidget( parent, name, 0, f), _subSampling(1), _data( 0),
+OpenGLTexWidget::OpenGLTexWidget( QWidget * parent)
+        :QGLWidget( parent), _subSampling(1), _data( 0),
          _rowStart( 0), _angle( 0),
          _tex_width( 0), _tex_height( 0)
 {

@@ -32,23 +32,23 @@
 #include "FastImageDisplayWid.hh"
 
 #include <iostream>
+#include <QX11Info>
 
 /*=========================================================================
  *  DESCRIPTION OF FUNCTION:  Constructor
  *  ==> see headerfile
  *=======================================================================*/
-FastImageDisplayWid::FastImageDisplayWid( QWidget * parent, 
-                                          const char * name, WFlags f)
-        :QWidget( parent, name, f | WRepaintNoErase),
-         _xImage( 0), _depth( x11Depth()), _subSampling(1)
+FastImageDisplayWid::FastImageDisplayWid( QWidget * parent)
+        :QWidget( parent),
+         _xImage( 0), _depth( QX11Info::appDepth()), _subSampling(1)
 {
+  setAttribute( Qt::WA_NoBackground);
+  setAttribute( Qt::WA_PaintOnScreen);
   /*-----------------------------------------------------------------------
    *  create the GC
    *-----------------------------------------------------------------------*/
-  _imageGC = XCreateGC(qt_xdisplay(), winId(), 0, NULL);
+  _imageGC = XCreateGC(QX11Info::display(), winId(), 0, NULL);
 }
-
-
 
 /*=========================================================================
  *  DESCRIPTION OF FUNCTION:  setImageSize()
@@ -92,7 +92,7 @@ void FastImageDisplayWid::setImageSize( unsigned int width, unsigned int height)
     default:
     {
       std::ostringstream errmsg;
-      errmsg << "Requested bit depth (" << x11Depth() << ") not supported. "
+      errmsg << "Requested bit depth (" << _depth << ") not supported. "
           "Please Set your Screen to 16, 24 or 32 bits, or use command "
           "line argument '-visual TrueColor' on SGI's";
       throw UnsupportedBitDepth( errmsg.str());
@@ -102,9 +102,9 @@ void FastImageDisplayWid::setImageSize( unsigned int width, unsigned int height)
     /*---------------------------------------------------------------------
      *  create an XImage (ownership of allocated data is passed to xImage)
      *---------------------------------------------------------------------*/
-    _xImage = XCreateImage(qt_xdisplay(), 
-                           (Visual*)x11Visual(),
-                           x11Depth(), 
+    _xImage = XCreateImage(QX11Info::display(), 
+                           (Visual*)QX11Info::appVisual(),
+                           QX11Info::appDepth(), 
                            ZPixmap, 0,
                            (char*) malloc( subHeight * subWidth * padding), 
                            subWidth, subHeight, padding*8, 0);
@@ -139,10 +139,8 @@ void FastImageDisplayWid::paintEvent( QPaintEvent * )
    *-----------------------------------------------------------------------*/
   if( _xImage != 0)
   {
-    XPutImage(qt_xdisplay(), winId(), _imageGC, _xImage,
+    XPutImage(QX11Info::display(), winId(), _imageGC, _xImage,
               0, 0, 0, 0, _xImage->width, _xImage->height);
   }
-  
 }
-
 

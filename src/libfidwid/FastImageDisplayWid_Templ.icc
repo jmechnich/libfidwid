@@ -29,10 +29,8 @@
  *  ==> see headerfile
  *=======================================================================*/
 template<typename WidgetType>
-FastImageDisplayWid_Templ<WidgetType>::FastImageDisplayWid_Templ( QWidget * parent, 
-                                                                  const char * name,
-                                                                  Qt::WFlags f)
-        :WidgetType( parent, name, f)
+FastImageDisplayWid_Templ<WidgetType>::FastImageDisplayWid_Templ( QWidget * parent)
+        :WidgetType( parent)
 {}
 
 /*=========================================================================

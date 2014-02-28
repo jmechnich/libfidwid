@@ -27,7 +27,9 @@
 #ifndef X11FIDWIDGET_HH
 #define X11FIDWIDGET_HH
 
-#include <qwidget.h>
+#include <QWidget>
+#include <QX11Info>
+#include <QPaintEvent>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -40,7 +42,7 @@ public:
   QSize sizeHint() const;
   
 protected:
-  X11FidWidget( QWidget* parent=0, const char* name=0, WFlags f=0);
+  X11FidWidget( QWidget* parent=0);
   ~X11FidWidget();
 
   void setImageSize( unsigned int width, unsigned int height);

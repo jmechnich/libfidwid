@@ -7,14 +7,19 @@ AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
-PKG_CHECK_MODULES([qt3], [qt-mt >= 3.3.0])
-AC_PATH_PROG([qt3_MOC], [moc-qt3], [no])
-if test $qt3_MOC = "no"; then
-   AC_PATH_PROG([qt3_MOC], [moc], [no])
-   if test $qt3_MOC = "no"; then
-      AC_MSG_ERROR( Could not find moc)
-   fi
-fi
+dnl PKG_CHECK_MODULES([qt3], [qt-mt >= 3.3.0])
+dnl AC_PATH_PROG([qt3_MOC], [moc-qt3], [no])
+dnl if test $qt3_MOC = "no"; then
+dnl    AC_PATH_PROG([qt3_MOC], [moc], [no])
+dnl    if test $qt3_MOC = "no"; then
+dnl       AC_MSG_ERROR( Could not find moc)
+dnl    fi
+dnl fi
+
+PKG_CHECK_MODULES([QtCore], [QtCore >= 4.8.4])
+PKG_CHECK_MODULES([QtGui], [QtGui >= 4.8.4])
+PKG_CHECK_MODULES([QtOpenGL], [QtOpenGL >= 4.8.4])
+AC_CHECK_PROG(MOC, [moc], [moc])
 
 dnl Check for GLUT headers first.
 AC_CHECK_HEADERS(GL/glut.h, ,

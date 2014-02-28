@@ -32,14 +32,16 @@
  *  DESCRIPTION OF FUNCTION:  Constructor
  *  ==> see headerfile
  *=======================================================================*/
-X11FidWidget::X11FidWidget( QWidget * parent, const char * name, WFlags f)
-        :QWidget( parent, name, f | WRepaintNoErase),
-         _xImage( 0), _depth( x11Depth()), _rowStart( 0), _subSampling(1)
+X11FidWidget::X11FidWidget( QWidget * parent)
+:QWidget( parent),
+    _xImage( 0), _depth( QX11Info::appDepth()), _rowStart( 0), _subSampling(1)
 {
+  setAttribute( Qt::WA_NoBackground);
+  setAttribute( Qt::WA_PaintOnScreen);
   /*-----------------------------------------------------------------------
    *  create the GC
    *-----------------------------------------------------------------------*/
-  _imageGC = XCreateGC(qt_xdisplay(), winId(), 0, NULL);
+  _imageGC = XCreateGC(QX11Info::display(), winId(), 0, NULL);
 }
 
 /*=========================================================================
@@ -107,8 +109,8 @@ X11FidWidget::setImageSize( unsigned int width, unsigned int height)
     /*---------------------------------------------------------------------
      *  create an XImage (ownership of allocated data is passed to xImage)
      *---------------------------------------------------------------------*/
-    _xImage = XCreateImage( qt_xdisplay(), 
-                            (Visual*)x11Visual(),
+    _xImage = XCreateImage( QX11Info::display(), 
+                            (Visual*)QX11Info::appVisual(),
                             _depth, 
                             ZPixmap, 0,
                             (char*) malloc( subHeight * lineWidth), 
@@ -144,14 +146,14 @@ X11FidWidget::paintEvent( QPaintEvent* repaintEvent)
    *-----------------------------------------------------------------------*/
   if( _xImage != 0)
   {
-
+    
 //     std::cerr << "X11FidWidget::paintEvent(): do repaint... " << std::flush;
     
-      
-      XPutImage(qt_xdisplay(), winId(), _imageGC, _xImage,
-                repaintEvent->rect().left(), repaintEvent->rect().top(),
-                repaintEvent->rect().left(), repaintEvent->rect().top(),
-                repaintEvent->rect().width(), repaintEvent->rect().height());
+    
+    XPutImage(QX11Info::display(), winId(), _imageGC, _xImage,
+              repaintEvent->rect().left(), repaintEvent->rect().top(),
+              repaintEvent->rect().left(), repaintEvent->rect().top(),
+              repaintEvent->rect().width(), repaintEvent->rect().height());
 
 //     std::cerr << "done" << std::endl;
 

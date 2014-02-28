@@ -42,7 +42,7 @@
 #ifndef FASTIMAGEDISPLAYWID_HH
 #define FASTIMAGEDISPLAYWID_HH
 
-#include <qwidget.h>
+#include <QWidget>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -88,8 +88,7 @@ public:
    *
    */
   /*======================================================================*/
-  FastImageDisplayWid( QWidget * parent=0, const char * name=0, 
-                       WFlags f = WRepaintNoErase );
+  FastImageDisplayWid( QWidget * parent=0 );
   
   
   /*======================================================================*/

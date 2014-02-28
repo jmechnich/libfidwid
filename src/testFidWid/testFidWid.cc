@@ -106,7 +106,7 @@ int main( int argc, char** argv)
 
   clock_t start_time = clock();
   
-  while( fidw.isShown())
+  while( fidw.isVisible())
   {
     /*-------------------------------------------------------------------
      *  process image
@@ -127,7 +127,7 @@ int main( int argc, char** argv)
     /*-------------------------------------------------------------------
      *  process Qt Events for at least 1 ms
      *-------------------------------------------------------------------*/
-    app.processEvents( 1);
+    app.processEvents();
 
     /*-------------------------------------------------------------------
      *  Display frames per second

@@ -27,8 +27,10 @@
 #ifndef OPENGLFIDWIDGET_HH
 #define OPENGLFIDWIDGET_HH
 
-#include <qgl.h>
-#include <qapplication.h>
+#include <QApplication>
+#include <QGLWidget>
+#include <QPaintEvent>
+#include <GL/glu.h>
 /*-------------------------------------------------------------------------
  *  OpenGLFBWidget class
  *-------------------------------------------------------------------------*/
@@ -38,7 +40,7 @@ public:
   QSize sizeHint() const;
   
 protected:
-  OpenGLFBWidget( QWidget * parent=0, const char * name=0, WFlags f=0);
+  OpenGLFBWidget( QWidget * parent=0);
   ~OpenGLFBWidget();
   
   void setImageSize( unsigned int width, unsigned int height);
@@ -67,7 +69,7 @@ public:
   QSize sizeHint() const;
   
 protected:
-  OpenGLTexWidget( QWidget * parent=0, const char * name=0, WFlags f=0);
+  OpenGLTexWidget( QWidget * parent=0);
   ~OpenGLTexWidget();
   
   void setImageSize( unsigned int width, unsigned int height);

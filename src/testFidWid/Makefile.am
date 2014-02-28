@@ -1,7 +1,7 @@
-AM_LDFLAGS = @qt3_LIBS@ -lGL -lglut
+AM_LDFLAGS = @QtCore_LIBS@ @QtGui_LIBS@ @QtOpenGL_LIBS@ -lGL -lGLU -lglut
 LDADD = $(top_builddir)/src/libfidwid/libfidwid.la
 
-INCLUDES = -I$(top_srcdir)/src/libfidwid @qt3_CFLAGS@
+INCLUDES = -I$(top_srcdir)/src/libfidwid @QtCore_CFLAGS@ @QtGui_CFLAGS@ @QtOpenGL_CFLAGS@
 
 bin_PROGRAMS = testFidWidget testX11FidWidget testOpenGLFBWidget testOpenGLTexWidget
 
