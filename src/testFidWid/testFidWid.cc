@@ -71,9 +71,23 @@ struct EXAMPLE_RGB8
 int main( int argc, char** argv)
 {
   QApplication app( argc, argv);
-
-  std::ifstream infile( "test.ppm");
-    
+  
+  std::string filename = "test.ppm";
+  std::cout << "Trying '" << filename << "'" << std::endl;
+  std::ifstream infile( filename.c_str());
+  if( !infile.is_open())
+  {
+    std::cout << "Could not open '" << filename << "'" << std::endl;
+    filename = std::string(DATADIR) + "/" + filename;
+    std::cout << "Trying '" << filename << "'" << std::endl;
+    infile.open( filename.c_str());
+    if( !infile.is_open())
+    {
+      std::cout << "Could not open '" << filename << "', exiting" << std::endl;
+      std::exit(1);
+    }
+  }
+  
   std::string magic;
   int width, height, maxvalue;
   infile >> magic 
