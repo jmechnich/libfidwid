@@ -1,0 +1,324 @@
+/**************************************************************************
+**       Title: 
+**    $RCSfile: OpenGLFidWidget.icc,v $
+**   $Revision: 1.4 $$Name:  $
+**       $Date: 2005/07/14 09:33:32 $
+**   Copyright: GPL $Author: tschmidt $
+** Description:
+**
+**    
+**
+**-------------------------------------------------------------------------
+**
+**  $Log: OpenGLFidWidget.icc,v $
+**  Revision 1.4  2005/07/14 09:33:32  tschmidt
+**  - added SubSampling capabilities
+**
+**  Revision 1.3  2005/02/27 23:16:28  mechnich
+**  added sizeHint() and changed setImagePerLine() to a templated function
+**
+**  Revision 1.2  2004/09/27 15:54:20  mechnich
+**  *** empty log message ***
+**
+**  Revision 1.1  2004/07/26 15:21:12  mechnich
+**  initial revision
+**
+**
+**
+**************************************************************************/
+
+/*-------------------------------------------------------------------------
+ *  OpenGLFBWidget class
+ *-------------------------------------------------------------------------*/
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+QSize
+OpenGLFBWidget::sizeHint() const
+{
+  return QSize( width(), height());
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:  setImageSize()
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLFBWidget::setImageSize( unsigned int width, unsigned int height)
+{
+
+  unsigned int subHeight = height / _subSampling;
+  unsigned int subWidth = width / _subSampling;
+
+  if( _data)
+      delete[] _data;
+  _data = new GLubyte[subWidth * subHeight * 3];
+  
+  if( _rowStart)
+      delete[] _rowStart;
+  _rowStart = new GLubyte*[subHeight];
+  if( _rowStart)
+  {
+    for( unsigned int i=0; i < subHeight; ++i)
+    {
+      _rowStart[i] = _data + i*subWidth*3;
+    }
+  }
+
+  setFixedSize(subWidth, subHeight);
+
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+template<typename SRCTYPE, typename Converter>
+inline
+void
+OpenGLFBWidget::setImagePerLine( SRCTYPE src, const Converter& conv)
+{
+  unsigned int lineWidth = (unsigned int) (width()*conv.srcBytePerPixel());
+  for( int i=0; i < height(); ++i)
+  {
+    conv.lineToRgb8( src, _rowStart[i], width(), _subSampling);
+    src += (unsigned int) ( lineWidth * _subSampling * _subSampling);
+  }
+
+  /*-----------------------------------------------------------------------
+   *  repaint the image
+   *-----------------------------------------------------------------------*/
+  updateGL();
+}
+ 
+inline
+void
+OpenGLFBWidget::setSubSampling(const unsigned int subSampling) 
+{
+  if (_subSampling == subSampling) return;
+  unsigned int subSampling_old = _subSampling;
+  _subSampling = subSampling;
+  setImageSize(width() * subSampling_old, height() * subSampling_old);
+}
+
+inline
+unsigned int
+OpenGLFBWidget::subSampling() const 
+{
+  return _subSampling;
+}
+ 
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLFBWidget::initializeGL()
+{
+  glClearColor( 0.0, 0.0, 0.0, 0.0);
+  glShadeModel( GL_FLAT);
+  glPixelZoom(1.0,-1.0);
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLFBWidget::resizeGL( int width, int height)
+{
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D( 0.0, (GLfloat)width, 0.0, (GLfloat)height);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glRasterPos2i( 0, height-1);
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLFBWidget::paintGL()
+{
+  if( _data)
+  {
+    glClear( GL_COLOR_BUFFER_BIT);
+   
+    glDrawPixels( width(), height(), GL_RGB, GL_UNSIGNED_BYTE, _data);
+  }
+}
+
+
+/*-------------------------------------------------------------------------
+ *  OpenGLTexWidget class
+ *-------------------------------------------------------------------------*/
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+QSize
+OpenGLTexWidget::sizeHint() const
+{
+  return QSize( width(), height());
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:  setImageSize()
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLTexWidget::setImageSize( unsigned int width, unsigned int height)
+{
+
+  unsigned int subHeight = height / _subSampling;
+  unsigned int subWidth = width / _subSampling;
+
+  setFixedSize(subWidth, subHeight);
+
+  _tex_width = 1;
+  while (_tex_width < subWidth) _tex_width *= 2;
+  
+  _tex_height = 1;
+  while (_tex_height < subHeight) _tex_height *= 2;
+
+  _texMat[0] = GLfloat(subWidth)  / GLfloat(_tex_width);
+  _texMat[5] = GLfloat(subHeight) / GLfloat(_tex_height);
+    
+  if( _data)
+      delete[] _data;
+  _data = new GLubyte[_tex_width*_tex_height*3];
+
+  if( _rowStart)
+      delete[] _rowStart;
+  _rowStart = new GLubyte*[subHeight];
+  if( _rowStart)
+  {
+    for( unsigned int i=0; i < subHeight; ++i)
+    {
+      _rowStart[i] = _data + i * _tex_width * 3;
+    }
+  }
+
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+template<typename SRCTYPE, typename Converter>
+inline
+void
+OpenGLTexWidget::setImagePerLine( SRCTYPE src, const Converter& conv)
+{
+  unsigned int lineWidth = (unsigned int) (width() * conv.srcBytePerPixel());
+  for( int i=0; i < height(); ++i)
+  {
+    conv.lineToRgb8( src, _rowStart[i], width(), _subSampling);
+    src += (unsigned int) ( lineWidth * _subSampling * _subSampling);
+  }
+
+  /*-----------------------------------------------------------------------
+   *  repaint the image
+   *-----------------------------------------------------------------------*/
+  QApplication::postEvent( this, new QPaintEvent( rect()));
+  // updateGL();
+}
+  
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLTexWidget::initializeGL()
+{
+  glClearColor( 0.0, 0.0, 0.0, 0.0);
+  glShadeModel( GL_FLAT);
+
+  glGenTextures(1, &_texName);
+  glBindTexture(GL_TEXTURE_2D, _texName);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+}
+
+inline
+void
+OpenGLTexWidget::setSubSampling(const unsigned int subSampling) 
+{
+  if (_subSampling == subSampling) return;
+  unsigned int subSampling_old = _subSampling;
+  _subSampling = subSampling;
+  setImageSize(width() * subSampling_old, height() * subSampling_old);
+}
+
+inline
+unsigned int
+OpenGLTexWidget::subSampling() const 
+{
+  return _subSampling;
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLTexWidget::resizeGL( int width, int height)
+{
+  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D( -(GLfloat)width/2, (GLfloat)width/2,
+              -(GLfloat)height/2,(GLfloat)height/2);
+  glMatrixMode(GL_TEXTURE);
+  glLoadMatrixd(_texMat);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+OpenGLTexWidget::paintGL()
+{
+  if( _data)
+  {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glBindTexture(GL_TEXTURE_2D, _texName);
+
+    glLoadIdentity();
+    glRotatef( GLfloat(_angle), 0.0, 0.0, 1.0);
+    glTranslatef(-width()/2.0, -height()/2.0, 0.0);
+    glBegin(GL_QUADS);
+    {
+      glTexCoord2f(0.0, 1.0); glVertex2f(0.0, 0.0);
+      glTexCoord2f(0.0, 0.0); glVertex2f(0.0, height());
+      glTexCoord2f(1.0, 0.0); glVertex2f(width(), height());
+      glTexCoord2f(1.0, 1.0); glVertex2f(width(), 0.0);
+    }
+    glEnd();
+    
+    glDisable(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _tex_width, _tex_height, 
+                 0, GL_RGB, GL_UNSIGNED_BYTE, _data);
+  }
+}

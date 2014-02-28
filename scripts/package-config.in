@@ -1,0 +1,137 @@
+#! /bin/sh
+
+#
+# Analogue to xml2-config
+#
+# Replace following variables (of course without the whitespace) with e.g. sed:
+#  _PACKAGEPREFIX _
+#  _PACKAGENAME _
+#  _PACKAGEVERSION _
+#  _PACKAGELTLIBS _
+#  _PACKAGECFLAGS _
+#  _PACKAGEEXTCFLAGS _
+#  _PACKAGELDFLAGS _
+#  _PACKAGELIBS _
+
+usage()
+{
+    cat <<EOF
+Usage: _PACKAGENAME_-config [OPTION]
+
+Known values for OPTION are:
+
+  --prefix=DIR		change _PACKAGENAME_ prefix [default $prefix]
+  --exec-prefix=DIR	change _PACKAGENAME_ exec prefix [default $exec_prefix]
+  --libs		print library linking information
+  --libtool-libs        print linking information for use with libtool
+  --cflags		print pre-processor and compiler flags
+  --help		display this help and exit
+  --version		output version information
+EOF
+
+    exit $1
+}
+
+prettydirs()
+{
+ echo "$@" | sed 's/\/\+/\//g' | sed 's/\/$//' | sed 's/\/\ /\ /g'
+}
+
+if test $# -eq 0; then
+    usage 1
+fi
+
+PACKAGEPREFIX="_PACKAGEPREFIX_"
+PACKAGENAME="_PACKAGENAME_"
+PACKAGEVERSION="_PACKAGEVERSION_"
+PACKAGELTLIBS="_PACKAGELTLIBS_"
+PACKAGECFLAGS="_PACKAGECFLAGS_"
+PACKAGEEXTCFLAGS="_PACKAGEEXTCFLAGS_"
+PACKAGELDFLAGS="_PACKAGELDFLAGS_"
+PACKAGELIBS="_PACKAGELIBS_"
+
+PACKAGEPREFIX_ESC=`prettydirs $PACKAGEPREFIX | sed 's/\\//\\\\\//g'`
+
+prefix=${PACKAGEPREFIX}
+prefix_esc=`prettydirs $prefix | sed 's/\\//\\\\\//g'`
+exec_prefix=${prefix}
+exec_prefix_esc=`prettydirs $exec_prefix | sed 's/\\//\\\\\//g'`
+
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+cflags=false
+libs=false
+
+while test $# -gt 0; do
+    case "$1" in
+	-*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+	*) optarg= ;;
+    esac
+    
+    case "$1" in
+	--prefix=*)
+	    prefix=`prettydirs $optarg`
+	    prefix_esc=`prettydirs $prefix | sed 's/\\//\\\\\//g'`
+	    includedir=$prefix/include
+	    libdir=$prefix/lib
+	    ;;
+	
+	--prefix)
+	    prettydirs ${prefix}
+	    ;;
+	
+	--exec-prefix=*)
+	    exec_prefix=`prettydirs $optarg`
+	    exec_prefix_esc=`prettydirs $exec_prefix | sed 's/\\//\\\\\//g'`
+	    libdir=$exec_prefix/lib
+	    ;;
+	
+	--exec-prefix)
+	    prettydirs ${exec_prefix}
+	    ;;
+	
+	--version)
+	    echo ${PACKAGEVERSION}
+	    exit 0
+	    ;;
+	
+	--help)
+	    usage 0
+	    ;;
+	
+	--cflags)
+	    echo `prettydirs $PACKAGECFLAGS | \
+		sed "s/$PACKAGEPREFIX_ESC/$prefix_esc/g"` ${PACKAGEEXTCFLAGS}
+	    
+	    ;;
+	
+	--libtool-libs)
+	    prettydirs ${PACKAGELTLIBS} | \
+		sed "s/$PACKAGEPREFIX_ESC/$prefix_esc/g"
+	    ;;
+	
+	--libs)
+	    if [ "`uname`" = "Linux" ]
+		then
+		if [ "-L${libdir}" = "-L/usr/lib64" ]
+		    then
+		    echo ${PACKAGELIBS} ${PACKAGELDFLAGS}
+		else
+		    echo `prettydirs -L$libdir` \
+			${PACKAGELIBS} ${PACKAGELDFLAGS}
+		fi
+	    else
+		echo `prettydirs -L$libdir` ${PACKAGELIBS} ${PACKAGELDFLAGS}
+	    fi
+	    ;;
+	
+	*)
+	    usage
+	    exit 1
+	    ;;
+    esac
+    shift
+done
+
+exit 0

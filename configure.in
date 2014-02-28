@@ -1,0 +1,37 @@
+AC_INIT(Makefile.am)
+AM_INIT_AUTOMAKE(libfidwid,0.1.0)
+AC_PROG_CC
+AC_PROG_CXX
+AC_LANG(C++)
+AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+
+PKG_CHECK_MODULES([qt3], [qt-mt >= 3.3.0])
+AC_PATH_PROG([qt3_MOC], [moc-qt3], [no])
+if test $qt3_MOC = "no"; then
+   AC_PATH_PROG([qt3_MOC], [moc], [no])
+   if test $qt3_MOC = "no"; then
+      AC_MSG_ERROR( Could not find moc)
+   fi
+fi
+
+dnl Check for GLUT headers first.
+AC_CHECK_HEADERS(GL/glut.h, ,
+	[AC_MSG_ERROR([No glut.h found.])])
+
+lt_major=1
+lt_revision=0
+lt_age=0
+
+AC_SUBST(lt_major)
+AC_SUBST(lt_revision)
+AC_SUBST(lt_age)
+
+AC_OUTPUT([
+        Makefile
+	src/Makefile
+	scripts/Makefile
+	src/libfidwid/Makefile
+	src/testFidWid/Makefile
+        ])

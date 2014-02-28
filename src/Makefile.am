@@ -1,0 +1,1 @@
+SUBDIRS = libfidwid testFidWid

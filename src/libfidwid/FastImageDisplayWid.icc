@@ -1,0 +1,213 @@
+/**************************************************************************
+**       Title: Widget for fast display of images 
+**    $RCSfile: FastImageDisplayWid.icc,v $
+**   $Revision: 1.6 $$Name:  $
+**       $Date: 2005/07/14 09:27:30 $
+**   Copyright: DWD GF-MM $Author: tschmidt $
+** Description:
+**
+**    
+**
+**-------------------------------------------------------------------------
+**
+**  $Log: FastImageDisplayWid.icc,v $
+**  Revision 1.6  2005/07/14 09:27:30  tschmidt
+**  - added SubSampling capabilities
+**
+**  Revision 1.5  2005/02/27 23:24:09  mechnich
+**  reverted to old X11 widget and renamed new one to FastImageDisplayWid_Templ
+**
+**  Revision 1.4  2004/07/26 15:21:35  mechnich
+**  added OpenGL display widgets
+**
+**  Revision 1.3  2003/10/23 17:21:45  mechnich
+**  added depth() and data() functions
+**
+**  Revision 1.2  2003/04/23 13:16:19  mechnich
+**  added linewise conversion
+**
+**  Revision 1.1.1.1  2003/01/23 12:30:31  ronneber
+**  initial revision
+**
+**  Revision 1.1  2002/01/10 17:52:16  ronneber
+**  imported sources from last year
+**
+**
+**************************************************************************/
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:  setImage()
+ *  ==> see headerfile
+ *=======================================================================*/
+template< typename Iterator, typename Converter>
+void FastImageDisplayWid::setImage( const Iterator& begin, const Iterator& end,
+                                    const Converter& conv)
+{
+  /*-----------------------------------------------------------------------
+   *  copy and convert the given image data to actual display depth
+   *-----------------------------------------------------------------------*/
+  unsigned char* trg = reinterpret_cast<unsigned char*>(_xImage->data);
+  Iterator src = begin;
+  int nValues = end - begin;
+
+  if (_subSampling == 1) 
+  {
+
+    switch( _depth)
+    {
+    case 16:
+      while( nValues > 4)
+      {
+        conv.fourValuesToRgb16( src, trg);
+        src += 4;
+        trg += 8;
+        nValues -= 4;
+    }
+    while( nValues > 0 && src != end) 
+    {
+      conv.singleValueToRgb16( src, trg);
+      ++src;
+      trg += 2;
+    }
+    break;
+    
+    case 24:
+//    while( nValues > 4)
+//    {
+//      conv.fourValuesToRgb24( src, trg);
+//      src += 4;
+//      trg += 12;
+//      nValues -= 4;
+//    }
+//    while( src != end) 
+//    {
+//      conv.singleValueToRgb24( src, trg);
+//      ++src;
+//      trg += 3;
+//    }
+//    break;
+//
+//
+    case 32:
+      while( nValues > 4)
+      {
+        conv.fourValuesToRgb32( src, trg);
+        src += 4;
+        trg += 16;
+        nValues -= 4;
+      }
+      while( nValues > 0 && src != end) 
+      {
+        conv.singleValueToRgb32( src, trg);
+        ++src;
+        trg += 4;
+      }
+      break;
+    }
+  }
+  else 
+  {
+    // ToDo: implement subSampling 
+  }
+    
+  /*-----------------------------------------------------------------------
+   *  repaint the image
+   *-----------------------------------------------------------------------*/
+  update();
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+template<typename SourceIterator, typename Converter>
+void
+FastImageDisplayWid::setImagePerLine( SourceIterator src,             
+                                      const Converter& conv,
+                                      unsigned int width,
+                                      unsigned int height,
+                                      unsigned int padding)
+{
+  /*-----------------------------------------------------------------------
+   *  copy and convert the given image data to actual display depth
+   *-----------------------------------------------------------------------*/
+  if( width == 0)
+      width = FastImageDisplayWid::width();
+  
+  if( height == 0)
+      height = FastImageDisplayWid::height();
+  
+  int nLines = height;
+  unsigned char* trg = reinterpret_cast<unsigned char*>(_xImage->data);
+
+  switch( _depth)
+  {
+  case 16:
+    break;
+  case 24:
+    while( nLines > 0)
+    {
+      conv.lineToBgr8( src, trg, width, 1, _subSampling);
+      src += (size_t) ( width * conv.srcBytePerPixel() * _subSampling);
+//      src += padding;
+      trg += width*4;
+      nLines -= _subSampling;
+    }
+    break;
+  case 32:
+    while( nLines != 0)
+    {
+      conv.lineToRgba8( src, trg, width, _subSampling);
+      src += (size_t) ( width * conv.srcBytePerPixel() * _subSampling);
+//      src += padding;
+      trg += width*4;
+      nLines -= _subSampling;
+    }
+    break;
+  default:
+    break;
+  }
+  
+  /*-----------------------------------------------------------------------
+   *  repaint the image
+   *-----------------------------------------------------------------------*/
+  update();
+}
+  
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+unsigned char*
+FastImageDisplayWid::data()
+{
+  return reinterpret_cast<unsigned char*>( _xImage);
+}
+
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION:
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+int
+FastImageDisplayWid::depth() const
+{
+  return _depth;
+}
+
+inline
+void FastImageDisplayWid::setSubSampling(const unsigned int subSampling) 
+{
+  if (_subSampling == subSampling) return;
+  setImageSize(_xImage->width * _subSampling,
+               _xImage->height * _subSampling);
+  _subSampling = subSampling;
+}
+
+inline
+unsigned int FastImageDisplayWid::subSampling() const
+{
+  return _subSampling;
+}

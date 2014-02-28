@@ -1,0 +1,28 @@
+Source: libfidwid
+Priority: optional
+Maintainer: Joerg Mechnich <mechnich@informatik.uni-freiburg.de>
+Build-Depends: debhelper (>= 4.0.0), autotools-dev, freeglut3-dev
+Standards-Version: 3.6.2
+Section: libs
+
+Package: libfidwid-dev
+Section: libdevel
+Architecture: any
+Depends: libfidwid1 (= ${Source-Version})
+Description: Fast Image Display widget library
+ This C++ library provides three widgets for fast image rendering.
+ The following drawing methods can be used:
+  1. X11
+  2. OpenGL (framebuffer)
+  3. OpenGL (texture)
+
+Package: libfidwid1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: library for parsing command-line arguments - development files
+ This C++ library provides three widgets for fast image rendering.
+ The following drawing methods can be used:
+  1. X11
+  2. OpenGL (framebuffer)
+  3. OpenGL (texture)
