@@ -1,5 +1,6 @@
-AC_INIT(Makefile.am)
-AM_INIT_AUTOMAKE(libfidwid,0.1.0)
+AC_INIT([libfidwid],[0.1.0])
+AC_CONFIG_SRCDIR([src/libfidwid/FastImageDisplayWid.hh])
+AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG(C++)

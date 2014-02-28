@@ -1,7 +1,7 @@
 AM_LDFLAGS = @QtCore_LIBS@ @QtGui_LIBS@ @QtOpenGL_LIBS@ -lGL -lGLU -lglut
 LDADD = $(top_builddir)/src/libfidwid/libfidwid.la
 
-INCLUDES = -I$(top_srcdir)/src/libfidwid @QtCore_CFLAGS@ @QtGui_CFLAGS@ @QtOpenGL_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src/libfidwid @QtCore_CFLAGS@ @QtGui_CFLAGS@ @QtOpenGL_CFLAGS@
 
 bin_PROGRAMS = testFidWidget testX11FidWidget testOpenGLFBWidget testOpenGLTexWidget
 
@@ -20,3 +20,5 @@ testOpenGLFBWidget_DEPENDENCIES = $(top_builddir)/src/libfidwid/libfidwid.la
 testOpenGLTexWidget_CXXFLAGS = -Wall -g -DWIDGETTYPE=OpenGLTexWidget
 testOpenGLTexWidget_SOURCES = testFidWid.cc
 testOpenGLTexWidget_DEPENDENCIES = $(top_builddir)/src/libfidwid/libfidwid.la
+
+EXTRA_DIST = test.ppm
