@@ -22,7 +22,7 @@ HOST_LINUX=0
 case $host_os in
   darwin* )
         # Do something specific for mac
-        GL_CPPFLAGS="-DHOST_DARWIN -framework OpenGL" 
+        GL_CPPFLAGS="-DHOST_DARWIN"
         GL_LIBS="-framework OpenGL"
         HOST_DARWIN=1
         ;;
