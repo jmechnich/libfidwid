@@ -29,6 +29,7 @@ case $host_os in
   linux*)
         AC_CHECK_HEADERS(GL/glu.h, ,
 	[AC_MSG_ERROR([No glu.h found.])])
+        GL_LIBS="-lGLU -lGL"
         HOST_LINUX=1
         ;;
     *)

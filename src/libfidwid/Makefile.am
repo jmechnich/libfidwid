@@ -4,7 +4,7 @@ AM_CPPFLAGS = -Wall -g @QtCore_CFLAGS@ @QtGui_CFLAGS@  @QtOpenGL_CFLAGS@ ${GL_CP
 lib_LTLIBRARIES = libfidwid.la
 
 libfidwid_la_LDFLAGS = \
-	-version-info @lt_major@:@lt_revision@:@lt_age@ @QtCore_LIBS@ @QtGui_LIBS@ @QtOpenGL_LIBS@ ${GL_LIBS}
+	-version-info @lt_major@:@lt_revision@:@lt_age@ @QtCore_LIBS@ @QtGui_LIBS@ @QtOpenGL_LIBS@
 
 libfidwid_la_SOURCES = \
 	FastImageDisplayWid.cc \
