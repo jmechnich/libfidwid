@@ -1,28 +1,17 @@
-/**************************************************************************
-**       Title: 
-**    $RCSfile: X11FidWidget.hh,v $
-**   $Revision: 1.3 $$Name:  $
-**       $Date: 2005/07/14 09:35:22 $
-**   Copyright: GPL $Author: tschmidt $
-** Description:
-**
-**    
-**
-**-------------------------------------------------------------------------
-**
-**  $Log: X11FidWidget.hh,v $
-**  Revision 1.3  2005/07/14 09:35:22  tschmidt
-**  - added SubSampling capabilities
-**
-**  Revision 1.2  2005/02/27 23:21:45  mechnich
-**  added sizeHint() and added SRCTYPE as template parameter for setImagePerLine()
-**
-**  Revision 1.1  2004/07/26 15:21:12  mechnich
-**  initial revision
-**
-**
-**
-**************************************************************************/
+// This file is part of libfidwid.
+//
+// libfidwid is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// libfidwid is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with libfidwid.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef X11FIDWIDGET_HH
 #define X11FIDWIDGET_HH

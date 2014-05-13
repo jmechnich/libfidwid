@@ -1,46 +1,30 @@
-/**************************************************************************
-**       Title: 
-**    $RCSfile: PixelConverter.hh,v $
-**   $Revision: 1.6 $$Name:  $
-**       $Date: 2005/07/14 09:34:56 $
-**   Copyright: GPL $Author: tschmidt $
-** Description:
-**
-**    
-**
-**-------------------------------------------------------------------------
-**
-**  $Log: PixelConverter.hh,v $
-**  Revision 1.6  2005/07/14 09:34:56  tschmidt
-**  - added SubSampling capabilities
-**
-**  Revision 1.5  2005/02/27 23:17:42  mechnich
-**  made the source pixel type a template parameter
-**
-**  Revision 1.4  2004/09/27 15:54:20  mechnich
-**  *** empty log message ***
-**
-**  Revision 1.3  2004/07/26 15:21:35  mechnich
-**  added OpenGL display widgets
-**
-**  Revision 1.2  2003/10/08 19:52:31  mechnich
-**  added MONO16 and RGB16 converters
-**
-**  Revision 1.1  2003/04/23 13:13:56  mechnich
-**  initial revision
-**
-**  Revision 1.1  2003/04/17 01:12:47  mechnich
-**  initial revision
-**
-**
-**
-**************************************************************************/
+// This file is part of libfidwid.
+//
+// libfidwid is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// libfidwid is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with libfidwid.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef PIXELCONVERTER_HH
 #define PIXELCONVERTER_HH
 
 #include <cstring>
 #include <iostream>
+
+void yuv2rgb( unsigned char y,
+              unsigned char u,
+              unsigned char v,
+              unsigned char* r,
+              unsigned char* g,
+              unsigned char* b);
 
 class PixelConverter
 {
@@ -69,8 +53,7 @@ public:
         {}
   
   void lineToRgb8( SRCTYPE src, unsigned char* trg,
-                   unsigned int width,
-                   unsigned int subSampling = 1) const;
+                   unsigned int width, unsigned int subSampling = 1) const;
   void lineToBgr8( SRCTYPE src, unsigned char* trg,
                    unsigned int width, unsigned int padding,
                    unsigned int subSampling = 1) const;
@@ -80,13 +63,13 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 1.5;
         }
  };
 
+template<int U, int Y1, int V, int Y2>
 class YUV422_RGBConverter : public PixelConverter
 {
 public:
@@ -107,12 +90,16 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 2;
         }
 };
+
+typedef YUV422_RGBConverter<1,0,3,2> YUYV_RGBConverter;
+typedef YUV422_RGBConverter<0,1,2,3> UYVY_RGBConverter;
+typedef YUV422_RGBConverter<1,2,3,0> YVYU_RGBConverter;
+typedef YUV422_RGBConverter<2,1,0,3> VYUY_RGBConverter;
 
 class YUV444_RGBConverter : public PixelConverter
 {
@@ -134,7 +121,6 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 3;
@@ -161,7 +147,32 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
+  float srcBytePerPixel() const
+        {
+          return 3;
+        }
+};
+
+class BGR_RGBConverter : public PixelConverter
+{
+public:
+  typedef unsigned char* SRCTYPE;
   
+  BGR_RGBConverter()
+        {}
+    
+  void lineToRgb8( SRCTYPE src, unsigned char* trg,
+                   unsigned int width,
+                   unsigned int subSampling = 1) const;
+  void lineToBgr8( SRCTYPE src, unsigned char* trg,
+                   unsigned int width, unsigned int padding,
+                   unsigned int subSampling = 1) const;
+  void lineToRgba8( SRCTYPE src, unsigned char* trg,
+                    unsigned int width,
+                    unsigned int subSampling = 1) const;
+  void lineToRgb16( SRCTYPE src, unsigned short* trg,
+                    unsigned int width,
+                    unsigned int subSampling = 1) const;
   float srcBytePerPixel() const
         {
           return 3;
@@ -188,7 +199,6 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 6;
@@ -215,7 +225,6 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 1;
@@ -242,7 +251,6 @@ public:
   void lineToRgb16( SRCTYPE src, unsigned short* trg,
                     unsigned int width,
                     unsigned int subSampling = 1) const;
-
   float srcBytePerPixel() const
         {
           return 2;

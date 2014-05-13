@@ -1,30 +1,22 @@
-/**************************************************************************
-**       Title: 
-**    $RCSfile: FastImageDisplayWid_Templ.hh,v $
-**   $Revision: 1.2 $$Name:  $
-**       $Date: 2005/07/14 09:28:31 $
-**   Copyright: GPL $Author: tschmidt $
-** Description:
-**
-**    
-**
-**-------------------------------------------------------------------------
-**
-**  $Log: FastImageDisplayWid_Templ.hh,v $
-**  Revision 1.2  2005/07/14 09:28:31  tschmidt
-**  - added SubSampling interface
-**
-**  Revision 1.1  2005/03/04 18:09:16  mechnich
-**  initial revision
-**
-**
-**
-**************************************************************************/
+// This file is part of libfidwid.
+//
+// libfidwid is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// libfidwid is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with libfidwid.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef FASTIMAGEDISPLAYWID_HH
 #define FASTIMAGEDISPLAYWID_HH
 
-#include <qwidget.h>
+#include <QWidget>
 
 /*======================================================================*/
 /*!
@@ -38,24 +30,33 @@ template<typename WidgetType>
 class FastImageDisplayWid_Templ : public WidgetType
 {
 public:
-   FastImageDisplayWid_Templ( QWidget* parent=0);
+   FastImageDisplayWid_Templ( QWidget* parent=0)
+           : WidgetType( parent)
+        {}
   
-  void setImageSize( unsigned int width, unsigned int height);
+  void setImageSize( unsigned int width, unsigned int height)
+        {
+          WidgetType::setImageSize( width, height);
+        }
 
   template<typename SourceIterator, typename Converter>
-  void setImagePerLine( SourceIterator src, const Converter& conv);
-
-  void setSubSampling(const unsigned int subSampling);
+  void setImagePerLine( SourceIterator src, const Converter& conv)
+        {
+          WidgetType::setImagePerLine( src, conv);
+        }
   
-  unsigned int subSampling() const;
+  void setSubSampling( unsigned int subSampling)
+        {
+          WidgetType::setSubSampling(subSampling);
+        }
+  
+  unsigned int subSampling() const
+        {
+          return WidgetType::subSampling();
+        }
   
 private:
   unsigned char** _rowStart;
 };
 
-#include "FastImageDisplayWid_Templ.icc"
-
-#endif  
-
-
-
+#endif

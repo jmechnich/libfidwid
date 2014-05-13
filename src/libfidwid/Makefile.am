@@ -16,7 +16,6 @@ pkginclude_HEADERS = \
 	FastImageDisplayWid.hh \
 	FastImageDisplayWid.icc \
 	FastImageDisplayWid_Templ.hh \
-	FastImageDisplayWid_Templ.icc \
 	OpenGLFidWidget.hh \
 	OpenGLFidWidget.icc \
 	PixelConverter.hh \

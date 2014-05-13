@@ -25,7 +25,7 @@ The `src/testFidWid` contains four test programs:
 On a i3-2357M CPU @ 1.30GHz with Intel HD 3000 graphics, the following
 timing results were achieved (using the included `test.ppm`):
 
-- `testFidWidget`: 116.6 FPS
-- `testOpenGLFBWidget`: 53.8 FPS
-- `testOpenGLTexWidget`: 161.8 FPS
-- `testX11FidWidget`: 158.2 FPS
+- `testFidWidget`: ~135 FPS
+- `testOpenGLFBWidget`: ~35 FPS
+- `testOpenGLTexWidget`: ~60 FPS
+- `testX11FidWidget`: ~135 FPS

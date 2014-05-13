@@ -1,33 +1,17 @@
-/**************************************************************************
-**       Title: Widget for fast display of images 
-**    $RCSfile: FastImageDisplayWid.cc,v $
-**   $Revision: 1.4 $$Name:  $
-**       $Date: 2005/07/14 09:26:30 $
-**   Copyright: DWD GF-MM $Author: tschmidt $
-** Description:
-**
-**    
-**
-**-------------------------------------------------------------------------
-**
-**  $Log: FastImageDisplayWid.cc,v $
-**  Revision 1.4  2005/07/14 09:26:30  tschmidt
-**  - added SubSampling capabilities
-**
-**  Revision 1.3  2005/02/27 23:12:05  mechnich
-**  re-added old X11 widget
-**
-**  Revision 1.2  2003/10/23 17:21:45  mechnich
-**  added depth() and data() functions
-**
-**  Revision 1.1.1.1  2003/01/23 12:30:31  ronneber
-**  initial revision
-**
-**  Revision 1.1  2002/01/10 17:52:16  ronneber
-**  imported sources from last year
-**
-**
-**************************************************************************/
+// This file is part of libfidwid.
+//
+// libfidwid is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// libfidwid is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with libfidwid.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FastImageDisplayWid.hh"
 
@@ -51,6 +35,17 @@ FastImageDisplayWid::FastImageDisplayWid( QWidget * parent)
 }
 
 /*=========================================================================
+ *  DESCRIPTION OF FUNCTION:  Destructor
+ *  ==> see headerfile
+ *=======================================================================*/
+FastImageDisplayWid::~FastImageDisplayWid()
+{
+  if( _xImage)
+      XDestroyImage( _xImage);
+  XFreeGC( QX11Info::display(), _imageGC);
+}
+
+/*=========================================================================
  *  DESCRIPTION OF FUNCTION:  setImageSize()
  *  ==> see headerfile
  *=======================================================================*/
@@ -61,7 +56,7 @@ void FastImageDisplayWid::setImageSize( unsigned int width, unsigned int height)
   unsigned int subHeight = height / _subSampling;
 
   /*-----------------------------------------------------------------------
-   *  Check if xImage needs to be resized
+   *  check if xImage needs to be resized
    *-----------------------------------------------------------------------*/
   if( _xImage == 0 
       || subHeight != (unsigned int)_xImage->height 
@@ -73,7 +68,7 @@ void FastImageDisplayWid::setImageSize( unsigned int width, unsigned int height)
     }
 
     /*---------------------------------------------------------------------
-     *  find out, how man bytes per pixel are required
+     *  find out how many bytes per pixel are required
      *---------------------------------------------------------------------*/
     int padding;
     
@@ -110,12 +105,8 @@ void FastImageDisplayWid::setImageSize( unsigned int width, unsigned int height)
                            subWidth, subHeight, padding*8, 0);
   }
 
-  /*-----------------------------------------------------------------------
-   *  the QtWidget should not be resized to bigger sizes
-   *-----------------------------------------------------------------------*/
   setFixedSize( subWidth, subHeight);
 }
-
 
 /*=========================================================================
  *  DESCRIPTION OF FUNCTION:
@@ -125,8 +116,6 @@ QSize FastImageDisplayWid::sizeHint() const
 {
   return QSize( _xImage->width, _xImage->height);
 }
-
-
 
 /*=========================================================================
  *  DESCRIPTION OF FUNCTION:

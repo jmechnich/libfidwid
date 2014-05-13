@@ -1,52 +1,17 @@
-/**************************************************************************
-**       Title: 
-**    $RCSfile: PixelConverter.icc,v $
-**   $Revision: 1.10 $$Name:  $
-**       $Date: 2005/07/14 09:34:56 $
-**   Copyright: GPL $Author: tschmidt $
-** Description:
-**
-**    
-**
-**-------------------------------------------------------------------------
-**
-**  $Log: PixelConverter.icc,v $
-**  Revision 1.10  2005/07/14 09:34:56  tschmidt
-**  - added SubSampling capabilities
-**
-**  Revision 1.9  2005/06/21 11:20:34  emmenlau
-**   - changed 'src++' to 'src+1' (gcc-4.0 compliant)
-**
-**  Revision 1.8  2005/02/27 23:20:45  mechnich
-**  cleaned up function names and definitions
-**
-**  Revision 1.7  2004/09/27 15:54:20  mechnich
-**  *** empty log message ***
-**
-**  Revision 1.6  2004/07/26 15:21:35  mechnich
-**  added OpenGL display widgets
-**
-**  Revision 1.5  2004/06/28 08:35:40  mechnich
-**  fixed RGB color bug
-**
-**  Revision 1.4  2003/10/08 19:52:31  mechnich
-**  added MONO16 and RGB16 converters
-**
-**  Revision 1.3  2003/05/06 20:17:14  mechnich
-**  added missing 'inline' before yuv2rgb function
-**
-**  Revision 1.2  2003/04/23 15:49:05  mechnich
-**  fixed bug in yuv2rgb conversion
-**
-**  Revision 1.1  2003/04/23 13:13:56  mechnich
-**  initial revision
-**
-**  Revision 1.1  2003/04/17 01:12:47  mechnich
-**  initial revision
-**
-**
-**
-**************************************************************************/
+// This file is part of libfidwid.
+//
+// libfidwid is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// libfidwid is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with libfidwid.  If not, see <http://www.gnu.org/licenses/>.
 
 inline
 void yuv2rgb( unsigned char y,
@@ -413,12 +378,12 @@ YUV411_RGBConverter::lineToRgb16( unsigned char* src,
  *                                       unsigned int width) const
  *  ==> see headerfile
  *=======================================================================*/
-inline
+template<int U, int Y0, int V, int Y1>
 void
-YUV422_RGBConverter::lineToRgb8( unsigned char* src,
-                                 unsigned char* trg,
-                                 unsigned int width,
-                                 unsigned int subSampling) const
+YUV422_RGBConverter<U,Y0,V,Y1>::lineToRgb8( unsigned char* src,
+                                            unsigned char* trg,
+                                            unsigned int width,
+                                            unsigned int subSampling) const
 {
   unsigned char r, g, b, y[2], u, v;
 
@@ -426,10 +391,11 @@ YUV422_RGBConverter::lineToRgb8( unsigned char* src,
   {
     while( width > 0)
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -451,10 +417,11 @@ YUV422_RGBConverter::lineToRgb8( unsigned char* src,
 
     while (tmp_width > 0) 
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -488,13 +455,13 @@ YUV422_RGBConverter::lineToRgb8( unsigned char* src,
  *                                       unsigned int width) const
  *  ==> see headerfile
  *=======================================================================*/
-inline
+template<int U, int Y0, int V, int Y1>
 void
-YUV422_RGBConverter::lineToBgr8( unsigned char* src,
-                                 unsigned char* trg,
-                                 unsigned int width,
-                                 unsigned int padding,
-                                 unsigned int subSampling) const
+YUV422_RGBConverter<U,Y0,V,Y1>::lineToBgr8( unsigned char* src,
+                                            unsigned char* trg,
+                                            unsigned int width,
+                                            unsigned int padding,
+                                            unsigned int subSampling) const
 {
   unsigned char r, g, b, y[2], u, v;
 
@@ -502,10 +469,11 @@ YUV422_RGBConverter::lineToBgr8( unsigned char* src,
   {
     while( width > 0)
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -528,10 +496,11 @@ YUV422_RGBConverter::lineToBgr8( unsigned char* src,
 
     while (tmp_width > 0) 
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -566,12 +535,12 @@ YUV422_RGBConverter::lineToBgr8( unsigned char* src,
  *                                        unsigned int width)
  *  ==> see headerfile
  *=======================================================================*/
-inline
+template<int U, int Y0, int V, int Y1>
 void
-YUV422_RGBConverter::lineToRgba8( unsigned char* src,
-                                  unsigned char* trg,
-                                  unsigned int width,
-                                  unsigned int subSampling) const
+YUV422_RGBConverter<U,Y0,V,Y1>::lineToRgba8( unsigned char* src,
+                                             unsigned char* trg,
+                                             unsigned int width,
+                                             unsigned int subSampling) const
 {
   unsigned int* trgCopy = reinterpret_cast<unsigned int*>( trg);
   
@@ -581,10 +550,11 @@ YUV422_RGBConverter::lineToRgba8( unsigned char* src,
   {
     while( width > 0)
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -606,10 +576,11 @@ YUV422_RGBConverter::lineToRgba8( unsigned char* src,
     
     while (tmp_width > 0) 
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -640,12 +611,12 @@ YUV422_RGBConverter::lineToRgba8( unsigned char* src,
  *                                        unsigned int width)
  *  ==> see headerfile
  *=======================================================================*/
-inline
+template<int U, int Y0, int V, int Y1>
 void
-YUV422_RGBConverter::lineToRgb16( unsigned char* src,
-                                  unsigned short* trg,
-                                  unsigned int width,
-                                  unsigned int subSampling) const
+YUV422_RGBConverter<U,Y0,V,Y1>::lineToRgb16( unsigned char* src,
+                                             unsigned short* trg,
+                                             unsigned int width,
+                                             unsigned int subSampling) const
 {
   unsigned char r, g, b, y[2], u, v;
 
@@ -653,10 +624,11 @@ YUV422_RGBConverter::lineToRgb16( unsigned char* src,
   {
     while( width > 0)
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -679,10 +651,11 @@ YUV422_RGBConverter::lineToRgb16( unsigned char* src,
 
     while (tmp_width > 0) 
     {
-      u = *(src++);
-      y[0] = *(src++);
-      v = *(src++);
-      y[1] = *(src++);
+      u    = *(src+U);
+      y[0] = *(src+Y0);
+      v    = *(src+V);
+      y[1] = *(src+Y1);
+      src+=4;
       
       for( unsigned int i = 0; i < 2; ++i)
       {
@@ -949,6 +922,111 @@ RGB_RGBConverter::lineToRgb16( unsigned char* src,
     *(trg++) = _convTable8To16[*(src++)];
 
     src += 3 * (subSampling - 1);
+    --width;
+  }
+}
+ 
+/*-------------------------------------------------------------------------
+ *  BGR_RGBConverter class
+ *-------------------------------------------------------------------------*/
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION: lineToRgb8( unsigned char* src,
+ *                                       unsigned char* trg,
+ *                                       unsigned int width) const
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+BGR_RGBConverter::lineToRgb8( unsigned char* src,
+                              unsigned char* trg,
+                              unsigned int width,
+                              unsigned int subSampling) const
+{
+  if (subSampling == 1) memcpy( trg, src, width*3);
+  else 
+  {
+    while (width > 0) 
+    {
+      *(trg++) = *(src+2);
+      *(trg++) = *(src+1);
+      *(trg++) = *(src);
+      src += 3 * subSampling;
+      --width;
+    }
+  }
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION: lineToBgr8( unsigned char* src,
+ *                                       unsigned char* trg,
+ *                                       unsigned int width,
+ *                                       unsigned int padding) const
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+BGR_RGBConverter::lineToBgr8( unsigned char* src,
+                              unsigned char* trg,
+                              unsigned int width,
+                              unsigned int padding,
+                              unsigned int subSampling) const
+{
+  while( width > 0)
+  {
+    *(trg++) = *(src);
+    *(trg++) = *(src+1);
+    *(trg++) = *(src+2);
+    src += 3 * subSampling;
+    trg += padding;
+    --width;
+  }
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION: lineToRgba8( unsigned char* src,
+ *                                        unsigned char* trg,
+ *                                        unsigned int width)
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+BGR_RGBConverter::lineToRgba8( unsigned char* src,
+                               unsigned char* trg,
+                               unsigned int width,
+                               unsigned int subSampling) const
+{
+  unsigned int* trgCopy = reinterpret_cast<unsigned int*>(trg);
+  while( width > 0)
+  {
+    *trgCopy = *(src+2) << 16 | *(src+1) << 8 | *(src) << 0;
+
+    src += 3 * subSampling;
+    ++trgCopy;
+    --width;
+  }
+}
+
+/*=========================================================================
+ *  DESCRIPTION OF FUNCTION: lineToRgb16( unsigned char* src,
+ *                                        unsigned short* trg,
+ *                                        unsigned int width)
+ *  ==> see headerfile
+ *=======================================================================*/
+inline
+void
+BGR_RGBConverter::lineToRgb16( unsigned char* src,
+                               unsigned short* trg,
+                               unsigned int width,
+                               unsigned int subSampling) const
+{
+  while( width > 0)
+  {
+    *(trg++) = _convTable8To16[*(src+2)];
+    *(trg++) = _convTable8To16[*(src+1)];
+    *(trg++) = _convTable8To16[*(src)];
+
+    src += 3 * subSampling;
     --width;
   }
 }
